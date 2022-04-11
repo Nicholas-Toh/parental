@@ -121,6 +121,17 @@ trait HasParent
     {
         static $parentClassName;
 
-        return $parentClassName ?: $parentClassName = (new ReflectionClass($this))->getParentClass()->getName();
+        if ($parentClassName) {
+            if (!in_array(HasChildren::class, class_uses($parentClassName))) {
+                $parentClassName = (new ReflectionClass($parentClassName))->getParentClass()->getName();
+                return $this->getParentClass();
+            }
+
+            return $parentClassName;
+        }
+        else {
+            $parentClassName = (new ReflectionClass($this))->getParentClass()->getName();
+            return $this->getParentClass();
+        }
     }
 }
